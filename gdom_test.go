@@ -170,6 +170,38 @@ func TestIterDelEle(t *testing.T) {
 	}
 }
 
+func TestIterAddEle(t *testing.T) {
+	xs := `<p><a/></p>`
+	d, _ := ParseString(xs)
+	r := d.Root()
+	ele := NewEle(NewName("", "b"), nil)
+	r.IterNode(func(n Node) {
+		ne, ok := n.(*Ele)
+		if ok && ne.Name.Local == "a" {
+			r.InsertAfter(ele, n)
+		}
+	})
+	xss := d.ToString()
+	if xss != "<p><a/><b/></p>" {
+		t.Error("iter insert after failed")
+	}
+
+	xs = `<p><a/></p>`
+	d, _ = ParseString(xs)
+	r = d.Root()
+	ele = NewEle(NewName("", "b"), nil)
+	r.IterNode(func(n Node) {
+		ne, ok := n.(*Ele)
+		if ok && ne.Name.Local == "a" {
+			r.InsertBefore(ele, n)
+		}
+	})
+	xss = d.ToString()
+	if xss != "<p><b/><a/></p>" {
+		t.Error("iter insert before failed")
+	}
+}
+
 func TestAddCharData(t *testing.T) {
 	xmlstr := `<p></p>`
 	d, _ := ParseString(xmlstr)
