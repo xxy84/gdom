@@ -230,3 +230,26 @@ func TestBeautiful(t *testing.T) {
 		t.Error(rs)
 	}
 }
+
+func TestInsertString(t *testing.T) {
+	xs := `<p>
+	<a>
+	</a>
+	</p>`
+	d, _ := ParseString(xs)
+	d.Root().AddNotParsedString(`
+		<b>
+		</b>
+		`)
+	buf := bytes.NewBuffer([]byte(""))
+	d.Root().IterNode(func(n Node) {
+		e, ok := n.(*Ele)
+		if ok {
+			buf.Write([]byte(e.Name.Local))
+		}
+	})
+	if buf.String() != "ab" {
+		t.Error("add not parsed string failed")
+	}
+
+}

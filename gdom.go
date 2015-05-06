@@ -912,7 +912,9 @@ func addProcInst(e Iparent, p *ProcInst) {
 func mergeinto1st(c1, c2 *CharData) {
 	s := strings.Join([]string{c1.V, c2.V}, "")
 	c1.V = s
-	c2.parent.getNodes().Remove(c2.pos())
+	if c2.pos() != nil {
+		c2.parent.getNodes().Remove(c2.pos())
+	}
 }
 
 func insertBefore(e Iparent, n Node, npos Node) error {
