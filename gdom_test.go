@@ -120,7 +120,7 @@ func TestInsert(t *testing.T) {
 		return
 	}
 	buf := bytes.NewBuffer(make([]byte, 0, 4))
-	xmldoc.Root().IterNode(func(n Node) {
+	xmldoc.Root().IterNode(func(n Node) bool {
 		e, ok := n.(*Ele)
 		if ok {
 			buf.Write([]byte(e.Name.Local))
@@ -139,7 +139,7 @@ func TestIterAttr(t *testing.T) {
 	xmlstr := `<x a="1" b="2" c="3"></a>`
 	d, _ := ParseString(xmlstr)
 	buf := bytes.NewBuffer(make([]byte, 0, 8))
-	d.Root().IterAttr(func(attr *Attr) {
+	d.Root().IterAttr(func(attr *Attr) bool {
 		buf.Write([]byte(attr.Name.Local))
 		buf.Write([]byte(attr.Value))
 		return true
@@ -153,14 +153,15 @@ func TestIterAttr(t *testing.T) {
 func TestIterDelEle(t *testing.T) {
 	xmlstr := `<p a="1" b="2" c="3"><a/><b/><c/></p>`
 	d, _ := ParseString(xmlstr)
-	d.Root().IterNode(func(e Node) {
+	d.Root().IterNode(func(e Node) bool {
 		ee, ok := e.(*Ele)
 		if ok && "b" == ee.Name.Local {
 			RemoveSelf(e)
 		}
+		return true
 	})
 	buf := bytes.NewBuffer(make([]byte, 0, 4))
-	d.Root().IterNode(func(n Node) {
+	d.Root().IterNode(func(n Node) bool {
 		e, ok := n.(*Ele)
 		if ok {
 			buf.Write([]byte(e.Name.Local))
@@ -178,7 +179,7 @@ func TestIterAddEle(t *testing.T) {
 	d, _ := ParseString(xs)
 	r := d.Root()
 	ele := NewEle(NewName("", "b"), nil)
-	r.IterNode(func(n Node) {
+	r.IterNode(func(n Node) bool {
 		ne, ok := n.(*Ele)
 		if ok && ne.Name.Local == "a" {
 			r.InsertAfter(ele, n)
@@ -194,7 +195,7 @@ func TestIterAddEle(t *testing.T) {
 	d, _ = ParseString(xs)
 	r = d.Root()
 	ele = NewEle(NewName("", "b"), nil)
-	r.IterNode(func(n Node) {
+	r.IterNode(func(n Node) bool {
 		ne, ok := n.(*Ele)
 		if ok && ne.Name.Local == "a" {
 			r.InsertBefore(ele, n)
@@ -247,7 +248,7 @@ func TestInsertString(t *testing.T) {
 		</b>
 		`)
 	buf := bytes.NewBuffer([]byte(""))
-	d.Root().IterNode(func(n Node) {
+	d.Root().IterNode(func(n Node) bool {
 		e, ok := n.(*Ele)
 		if ok {
 			buf.Write([]byte(e.Name.Local))

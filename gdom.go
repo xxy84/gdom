@@ -81,7 +81,7 @@ func iterNode(p Iparent, f IterNodeFunc) {
 	rt := true
 	for x := p.getNodes().Front(); rt && x != nil; {
 		nxt := x.Next()
-		rt := f(x.Value.(Node))
+		rt = f(x.Value.(Node))
 		x = nxt
 	}
 }
