@@ -125,6 +125,7 @@ func TestInsert(t *testing.T) {
 		if ok {
 			buf.Write([]byte(e.Name.Local))
 		}
+		return true
 	})
 	s := string(buf.Bytes())
 	if s != "abcd" {
@@ -141,6 +142,7 @@ func TestIterAttr(t *testing.T) {
 	d.Root().IterAttr(func(attr *Attr) {
 		buf.Write([]byte(attr.Name.Local))
 		buf.Write([]byte(attr.Value))
+		return true
 	})
 	s := string(buf.Bytes())
 	if s != "a1b2c3" {
@@ -163,6 +165,7 @@ func TestIterDelEle(t *testing.T) {
 		if ok {
 			buf.Write([]byte(e.Name.Local))
 		}
+		return true
 	})
 	s := string(buf.Bytes())
 	if s != "ac" {
@@ -180,6 +183,7 @@ func TestIterAddEle(t *testing.T) {
 		if ok && ne.Name.Local == "a" {
 			r.InsertAfter(ele, n)
 		}
+		return true
 	})
 	xss := d.ToString()
 	if xss != "<p><a/><b/></p>" {
@@ -195,6 +199,7 @@ func TestIterAddEle(t *testing.T) {
 		if ok && ne.Name.Local == "a" {
 			r.InsertBefore(ele, n)
 		}
+		return true
 	})
 	xss = d.ToString()
 	if xss != "<p><b/><a/></p>" {
@@ -247,6 +252,7 @@ func TestInsertString(t *testing.T) {
 		if ok {
 			buf.Write([]byte(e.Name.Local))
 		}
+		return true
 	})
 	if buf.String() != "ab" {
 		t.Error("add not parsed string failed")

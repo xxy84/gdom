@@ -74,13 +74,14 @@ type Iparent interface {
 	renewNodes()
 }
 
-// Node Iteration Function def
-type IterNodeFunc func(node Node)
+// Node Iteration Function def, return false to abort iteration
+type IterNodeFunc func(node Node) bool
 
 func iterNode(p Iparent, f IterNodeFunc) {
-	for x := p.getNodes().Front(); x != nil; {
+	rt := true
+	for x := p.getNodes().Front(); rt && x != nil; {
 		nxt := x.Next()
-		f(x.Value.(Node))
+		rt := f(x.Value.(Node))
 		x = nxt
 	}
 }
@@ -384,7 +385,7 @@ func (p *Directive) clearParent() {
 	p.parent = nil
 }
 
-// Comment like <!--...-->, base type is []byte
+// Comment like <!--...-->
 type Comment struct {
 	*list.Element
 	V      string
@@ -432,7 +433,7 @@ func (p *Comment) clearParent() {
 	p.parent = nil
 }
 
-// the text in the Element, the base type is []byte
+// the text in the Element
 type CharData struct {
 	*list.Element
 	V      string
@@ -489,13 +490,15 @@ func (e *Ele) IterNode(f IterNodeFunc) {
 	iterNode(e, f)
 }
 
-type IterAttrFunc func(attr *Attr)
+// return false to abort iteration
+type IterAttrFunc func(attr *Attr) bool
 
 //in f, can't call e.RemoveAttrByName or e.RemoveAttrByStrName. if you need, call e.RemoveAttr
 func (e *Ele) IterAttr(f IterAttrFunc) {
-	for x := e.attrs.Front(); x != nil; {
+	rt := true
+	for x := e.attrs.Front(); rt && x != nil; {
 		nxt := x.Next()
-		f(x.Value.(*Attr))
+		rt = f(x.Value.(*Attr))
 		x = nxt
 	}
 }
